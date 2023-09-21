@@ -2,7 +2,7 @@ import pygame as p
 from Chess import ChessEngine
 
 BOARD_WIDTH = BOARD_HEIGHT = 512
-MOVE_LOG_PANEL_WIDTH = 250
+MOVE_LOG_PANEL_WIDTH = BOARD_WIDTH
 MOVE_LOG_PANEL_HEIGHT = 100
 DIMENSION = 8
 SQ_SIZE = BOARD_HEIGHT // DIMENSION
@@ -17,7 +17,7 @@ def loadImages():
 
 def main():
     p.init()
-    screen = p.display.set_mode((BOARD_WIDTH + MOVE_LOG_PANEL_WIDTH, BOARD_HEIGHT + MOVE_LOG_PANEL_HEIGHT))
+    screen = p.display.set_mode((BOARD_WIDTH, BOARD_HEIGHT + MOVE_LOG_PANEL_HEIGHT))
     p.display.set_caption("Chess Game")
     clock = p.time.Clock()
     moveLogFont = p.font.SysFont("Times Roma", 30, False, False)
@@ -34,7 +34,7 @@ def main():
     startButton = ChessEngine.Button(185, 350, imageStart, 1)
     while running:
         if menu:
-            screen.fill("black") #this can be removed
+            screen.fill("dim gray")
             screen.blit(imageLogo, (0, 0))
             if startButton.draw(screen):
                 menu = False
