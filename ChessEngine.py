@@ -1,4 +1,3 @@
-import pygame as p
 class GameState:
     def __init__(self):
         self.board = [
@@ -42,12 +41,10 @@ class GameState:
                     self.moveFunctions[piece](r, c, moves)
         return moves
 
-    # Edited Version
     def getPawnMoves(self, r, c, moves):
-        direction = -1 if self.whiteToMove else 1  # Set direction based on color
+        direction = -1 if self.whiteToMove else 1
         start_row = 6 if self.whiteToMove else 1
         enemy_color = "b" if self.whiteToMove else "w"
-
         new_r = r + direction
 
         if 0 <= new_r < 8:
@@ -61,7 +58,6 @@ class GameState:
                 if 0 <= new_c < 8 and self.board[new_r][new_c][0] == enemy_color:
                     moves.append(Move((r, c), (new_r, new_c), self.board))
 
-    # Edited Version
     def getRookMoves(self, r, c, moves):
         directions = ((-1, 0), (0, -1), (1, 0), (0, 1))
         enemyColor = "b" if self.whiteToMove else "w"
@@ -71,14 +67,16 @@ class GameState:
                 end_row, end_col = r + i * s, c + j * s
                 if 0 <= end_row < 8 and 0 <= end_col < 8:
                     endPiece = self.board[end_row][end_col]
-                    if endPiece == "--" or endPiece[0] == enemyColor:
+                    if endPiece == "--":
                         moves.append(Move((r, c), (end_row, end_col), self.board))
-                        if endPiece != "--":
-                            break
+                    elif endPiece[0] == enemyColor:
+                        moves.append(Move((r, c), (end_row, end_col), self.board))
+                        break
+                    else:
+                        break
                 else:
                     break
 
-    # Edited Version
     def getKnightMoves(self, r, c, moves):
         knight_moves = [(-2, -1), (-2, 1), (-1, -2), (-1, 2), (1, -2), (1, 2), (2, -1), (2, 1)]
         ally_color = "w" if self.whiteToMove else "b"
@@ -88,7 +86,6 @@ class GameState:
             if 0 <= end_row < 8 and 0 <= end_col < 8 and self.board[end_row][end_col][0] != ally_color:
                 moves.append(Move((r, c), (end_row, end_col), self.board))
 
-    # Edited Version
     def getBishopMoves(self, r, c, moves):
         directions = ((-1, -1), (-1, 1), (1, -1), (1, 1))
         enemyColor = "b" if self.whiteToMove else "w"
@@ -98,10 +95,13 @@ class GameState:
                 endRow, endCol = r + i[0] * j, c + i[1] * j
                 if 0 <= endRow < 8 and 0 <= endCol < 8:
                     endPiece = self.board[endRow][endCol]
-                    if endPiece == "--" or endPiece[0] == enemyColor:
+                    if endPiece == "--":
                         moves.append(Move((r, c), (endRow, endCol), self.board))
-                        if endPiece[0] == enemyColor:
-                            break
+                    elif endPiece[0] == enemyColor:
+                        moves.append(Move((r, c), (endRow, endCol), self.board))
+                        break
+                    else:
+                        break
                 else:
                     break
 
@@ -109,7 +109,6 @@ class GameState:
         self.getRookMoves(r, c, moves)
         self.getBishopMoves(r, c, moves)
 
-    # Edited Version
     def getKingMoves(self, r, c, moves):
         kingMoves = [(-1, -1), (-1, 0), (-1, 1), (0, -1), (0, 1), (1, -1), (1, 0), (1, 1)]
         allyColor = "w" if self.whiteToMove else "b"
@@ -118,7 +117,6 @@ class GameState:
             endRow, endCol = r + i, c + j
             if 0 <= endRow < 8 and 0 <= endCol < 8 and self.board[endRow][endCol][0] != allyColor:
                 moves.append(Move((r, c), (endRow, endCol), self.board))
-
 
 class Move:
     ranksToRows = {"1": 7, "2": 6, "3": 5, "4": 4,
@@ -147,26 +145,3 @@ class Move:
 
     def getRankFile(self, r, c):
         return self.colsToFiles[c] + self.rowsToRanks[r]
-
-class Button:
-    def __init__(self, x, y, image, scale):
-        self.image = p.transform.scale(image, (int(image.get_width() * scale), int(image.get_height() * scale)))
-        self.rect = self.image.get_rect(topleft=(x, y))
-        self.clicked = False
-
-    def draw(self, surface):
-        action = False
-        pos = p.mouse.get_pos()
-        click = p.mouse.get_pressed()[0]
-
-        if self.rect.collidepoint(pos):
-            if click and not self.clicked:
-                self.clicked = True
-                action = True
-
-        if not click:
-            self.clicked = False
-
-        surface.blit(self.image, self.rect)
-
-        return action
