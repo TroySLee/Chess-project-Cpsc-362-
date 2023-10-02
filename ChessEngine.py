@@ -1,3 +1,4 @@
+import pygame as p
 class GameState:
     def __init__(self):
         self.board = [
@@ -45,23 +46,21 @@ class GameState:
         direction = -1 if self.whiteToMove else 1
         start_row = 6 if self.whiteToMove else 1
         enemy_color = "b" if self.whiteToMove else "w"
-        new_r = r + direction
 
+        new_r = r + direction
         if 0 <= new_r < 8:
             if self.board[new_r][c] == "--":
                 moves.append(Move((r, c), (new_r, c), self.board))
                 if r == start_row and self.board[new_r + direction][c] == "--":
                     moves.append(Move((r, c), (new_r + direction, c), self.board))
-
-            for dc in [-1, 1]:
-                new_c = c + dc
+            for i in [-1, 1]:
+                new_c = c + i
                 if 0 <= new_c < 8 and self.board[new_r][new_c][0] == enemy_color:
                     moves.append(Move((r, c), (new_r, new_c), self.board))
 
     def getRookMoves(self, r, c, moves):
         directions = ((-1, 0), (0, -1), (1, 0), (0, 1))
         enemyColor = "b" if self.whiteToMove else "w"
-
         for i, j in directions:
             for s in range(1, 8):
                 end_row, end_col = r + i * s, c + j * s
@@ -145,3 +144,26 @@ class Move:
 
     def getRankFile(self, r, c):
         return self.colsToFiles[c] + self.rowsToRanks[r]
+
+class Button:
+    def __init__(self, x, y, image, scale):
+        self.image = p.transform.scale(image, (int(image.get_width() * scale), int(image.get_height() * scale)))
+        self.rect = self.image.get_rect(topleft=(x, y))
+        self.clicked = False
+
+    def draw(self, surface):
+        action = False
+        pos = p.mouse.get_pos()
+        click = p.mouse.get_pressed()[0]
+
+        if self.rect.collidepoint(pos):
+            if click and not self.clicked:
+                self.clicked = True
+                action = True
+
+        if not click:
+            self.clicked = False
+
+        surface.blit(self.image, self.rect)
+
+        return action
